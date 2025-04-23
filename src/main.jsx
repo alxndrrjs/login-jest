@@ -3,14 +3,18 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
-// src/main.jsx (añade esto al inicio del archivo)
-if (import.meta.env.MODE === 'development') {
-  const { worker } = await import('./mocks/browser');
-  worker.start();
+async function enableMocks() {
+  if (import.meta.env.MODE === 'development') {
+    const { worker } = await import('./mocks/browser');
+    await worker.start();
+    console.log('%c[MSW] Mocking enabled.', 'color: orange');
+  }
 }
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
+enableMocks().then(() => {
+  createRoot(document.getElementById('root')).render(
+    <StrictMode>
+      <App />
+    </StrictMode>
+  );
+});
