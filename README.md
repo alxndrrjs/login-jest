@@ -1,12 +1,28 @@
-# React + Vite
+# Login App – React + Vite + MSW + Jest
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este proyecto es una aplicación de autenticación simple construida con **React** y **Vite**. Permite a los usuarios crear cuentas, iniciar sesión y acceder a un panel de control (dashboard). Las solicitudes HTTP están simuladas mediante **Mock Service Worker (MSW)**, y las pruebas se realizan con **Jest** y **React Testing Library**.
 
-Currently, two official plugins are available:
+## Características
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Registro y autenticación de usuarios
+- Dashboard protegido tras autenticación
+- Simulación de backend con MSW
+- Pruebas unitarias e integración con Jest
+- Configuración moderna con Vite (incluye HMR)
 
-## Expanding the ESLint configuration
+## Tecnologías
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- [React](https://react.dev/)
+- [Vite](https://vitejs.dev/)
+- [Mock Service Worker (MSW)](https://mswjs.io/)
+- [Jest](https://jestjs.io/)
+- [React Testing Library](https://testing-library.com/)
+
+---
+
+## 🚀 Instalación
+
+```bash
+git clone https://github.com/alxndrrjs/login-jest.git
+cd login-jest
+npm install
