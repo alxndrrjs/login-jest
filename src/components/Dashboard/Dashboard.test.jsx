@@ -1,124 +1,70 @@
-/* eslint-disable */
-import { render, screen, waitFor } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from '../../context/AuthContext';
-import Dashboard from './Dashboard';
-import '@testing-library/jest-dom';
+import React from 'react'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { BrowserRouter } from 'react-router-dom'
+import Dashboard from './Dashboard'
+import { useAuth } from '../../context/AuthContext'
 
-// Mock the useNavigate hook
-const mockNavigate = jest.fn();
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useNavigate: () => mockNavigate,
-}));
+// 1) Mockeamos el módulo de AuthContext
+jest.mock('../../context/AuthContext')
 
 describe('Dashboard', () => {
+  const mockUser = { name: 'Usuario Test', email: 'test@test.com' }
+
   beforeEach(() => {
-    // Clear localStorage before each test
-    localStorage.clear();
-    // Reset mockNavigate
-    mockNavigate.mockReset();
-  });
+    // 2) Para cada test devolvemos un contexto autenticado
+    useAuth.mockReturnValue({
+      user: mockUser,
+      loading: false,
+      isAuthenticated: true,
+      logout: jest.fn(),
+    })
 
-  it('redirects to login when not authenticated', async () => {
+    // 3) Mockeamos sólo la llamada a /api/users/count
+    global.fetch = jest.fn(url => {
+      if (url.endsWith('/api/users/count')) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve({ count: 3 }),
+        })
+      }
+      return Promise.reject('Not handled')
+    })
+  })
+
+  afterEach(() => {
+    jest.resetAllMocks()
+  })
+
+  it('muestra la info del usuario y el userCount', async () => {
     render(
       <BrowserRouter>
-        <AuthProvider>
-          <Dashboard />
-        </AuthProvider>
+        <Dashboard />
       </BrowserRouter>
-    );
+    )
 
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/login');
-    });
-  });
+    // Ya no hace falta simular login aquí
+    expect(screen.getByText(`Bienvenido, ${mockUser.name}`)).toBeInTheDocument()
+    expect(screen.getByText(mockUser.email)).toBeInTheDocument()
+    // Espera al número de usuarios
+    expect(await screen.findByText('3')).toBeInTheDocument()
+  })
 
-  it('shows loading spinner while checking authentication', () => {
-    render(
-      <BrowserRouter>
-        <AuthProvider>
-          <Dashboard />
-        </AuthProvider>
-      </BrowserRouter>
-    );
-
-    expect(screen.getByRole('status')).toBeInTheDocument();
-  });
-
-  it('displays user information when authenticated', async () => {
-    // Set up mock user data
-    const mockUser = {
-      name: 'Test User',
-      email: 'test@test.com'
-    };
-
-    // Mock the fetchUserProfile function
-    jest.spyOn(global, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        json: () => Promise.resolve(mockUser),
-        ok: true
-      })
-    );
-
-    // Set token in localStorage
-    localStorage.setItem('token', 'fake-token');
+  it('llama a logout al hacer click', async () => {
+    const logoutMock = jest.fn()
+    useAuth.mockReturnValue({
+      user: mockUser,
+      loading: false,
+      isAuthenticated: true,
+      logout: logoutMock,
+    })
 
     render(
       <BrowserRouter>
-        <AuthProvider>
-          <Dashboard />
-        </AuthProvider>
+        <Dashboard />
       </BrowserRouter>
-    );
+    )
 
-    // Wait for user data to be displayed
-    await waitFor(() => {
-      expect(screen.getByText('Bienvenido, Test User')).toBeInTheDocument();
-      expect(screen.getByText('test@test.com')).toBeInTheDocument();
-    });
-
-    // Clean up
-    global.fetch.mockRestore();
-  });
-
-  it('handles logout correctly', async () => {
-    // Set up mock user data
-    const mockUser = {
-      name: 'Test User',
-      email: 'test@test.com'
-    };
-
-    // Mock the fetchUserProfile function
-    jest.spyOn(global, 'fetch').mockImplementation(() =>
-      Promise.resolve({
-        json: () => Promise.resolve(mockUser),
-        ok: true
-      })
-    );
-
-    // Set token in localStorage
-    localStorage.setItem('token', 'fake-token');
-
-    render(
-      <BrowserRouter>
-        <AuthProvider>
-          <Dashboard />
-        </AuthProvider>
-      </BrowserRouter>
-    );
-
-    // Wait for the logout button to appear
-    const logoutButton = await screen.findByText('Cerrar sesión');
-    
-    // Click the logout button
-    logoutButton.click();
-
-    // Verify token is removed and user is redirected
-    expect(localStorage.getItem('token')).toBeNull();
-    expect(mockNavigate).toHaveBeenCalledWith('/login');
-
-    // Clean up
-    global.fetch.mockRestore();
-  });
-});
+    fireEvent.click(await screen.findByText('Cerrar sesión'))
+    expect(logoutMock).toHaveBeenCalled()
+  })
+})

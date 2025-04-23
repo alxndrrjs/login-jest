@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -138,6 +139,7 @@ export const LoginForm = () => {
                     </div>
 
                     <button
+                        id='login'
                         type="submit"
                         disabled={isLoading}
                         className={`w-full bg-green-500 text-white py-3 px-4 mb-6 cursor-pointer uppercase font-semibold transition-all duration-0.3s rounded-full hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 ${
