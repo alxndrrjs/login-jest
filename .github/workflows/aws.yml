@@ -1,0 +1,31 @@
+name: Deploy in EC2 via Self-Hosted Runner
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: Build & Deploy on EC2
+    runs-on: self-hosted  # <-- ¡Usa tu runner EC2!
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build app
+      run: npm run build
+
+    - name: Serve React app on port 80
+      run: |
+        sudo npm install -g serve
+        sudo fuser -k 80/tcp || true
+        nohup sudo serve -s build -l 80 > log.txt 2>&1 &
