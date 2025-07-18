@@ -27,6 +27,7 @@ jobs:
 
     - name: Deploy to EC2 IP
       run: |
+        sudo mkdir -p /var/www/testing-login-jest
         sudo rm -rf /var/www/testing-login-jest/*
         sudo cp -r dist/* /var/www/testing-login-jest/
         sudo chown -R www-data:www-data /var/www/testing-login-jest
