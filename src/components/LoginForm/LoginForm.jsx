@@ -103,7 +103,8 @@ export const LoginForm = () => {
                 <div className='max-w-xs mx-auto'>
 
 {/*                     <h2 className='text-xl text-white uppercase font-semibold text-center underline underline-offset-8 decoration-green-500 mb-12'>Ingresar</h2> */}
-                    <h2 className='text-xl text-white uppercase font-semibold text-center underline underline-offset-8 decoration-green-500 mb-12'>Despliegue automático - Prueba</h2>
+{/*                     <h2 className='text-xl text-white uppercase font-semibold text-center underline underline-offset-8 decoration-green-500 mb-12'>Despliegue automático - Prueba</h2> */}
+                    <h2 className='text-xl text-white uppercase font-semibold text-center underline underline-offset-8 decoration-green-500 mb-12'>Prueba Selenium</h2>
 
                     <div className="mb-6">
                         <input
